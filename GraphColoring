@@ -1,0 +1,37 @@
+public class GraphColoring {
+	int newColor;
+	int[][] adjacencyMatrix;
+	Node usedColorTop;
+	public GraphColoring(){
+		usedColorTop=new Node(0);
+	}
+	
+	public void pushUsedColor(Node newNode){
+		if (usedColorTop.next==null){
+			usedColorTop.next=newNode;
+		}
+		else{
+			Node temp=usedColorTop.next;
+			usedColorTop.next=newNode;
+			newNode.next=temp;
+		}
+	}
+	public int findUsedColor(int node, int numNode){
+		if (usedColorTop.next==null) return -1;
+		Node temp=usedColorTop.next;
+		while (temp!=null){
+			if (!checkAdj(node,numNode,temp.colorID)) return temp.colorID;
+			else temp=temp.next;
+		}
+		return 0;
+	}
+	public boolean checkAdj(int node, int numNode, int color){
+		for (int i=1; i<numNode+1; i++){
+			if (adjacencyMatrix[node][i]==1){
+				if (node!=i && adjacencyMatrix[i][i]==color) return true;
+			}
+		}
+		return false;
+	}
+
+}
