@@ -1,0 +1,64 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Main {
+
+	public static void main(String[] args) throws IOException {
+		GraphColoring coloring=new GraphColoring();
+		File in = new File(args[0]);
+		Scanner s=new Scanner(in);
+		FileWriter fWriter=new FileWriter(args[1]);
+		BufferedWriter bWriter= new BufferedWriter(fWriter);
+		int numNode=s.nextInt();
+		coloring.adjacencyMatrix=new int[numNode+1][numNode+1];
+		for (int r=1; r<numNode+1; r++){
+			for (int c=1; c<numNode+1; c++){
+				coloring.adjacencyMatrix[r][c]=0;
+			}
+		}
+		while (s.hasNextInt()){
+			int edge1=s.nextInt();
+			int edge2=s.nextInt();
+			coloring.adjacencyMatrix[edge1][edge2]=1;
+			coloring.adjacencyMatrix[edge2][edge1]=1;
+		}
+		int newColor=0;
+		int currentNode=0;
+		boolean allColored=false;
+		while (!allColored){
+			currentNode++;
+			for (int r=1; r<numNode+1; r++){
+				for (int c=1; c<numNode+1; c++){
+					bWriter.write(String.valueOf(coloring.adjacencyMatrix[r][c]));
+				}
+				bWriter.newLine();
+			}
+			bWriter.newLine();
+			int usedColor=coloring.findUsedColor(currentNode, numNode);
+			if (usedColor>0) coloring.adjacencyMatrix[currentNode][currentNode]=newColor;
+			else{
+				newColor++;
+				coloring.adjacencyMatrix[currentNode][currentNode]=newColor;
+				Node newNode=new Node(newColor);
+				coloring.pushUsedColor(newNode);
+			}
+			
+			if (currentNode==numNode) allColored=true;
+		}
+		bWriter.write("Number of colors used is "+newColor);
+		bWriter.newLine();
+		for (int r=1; r<numNode+1; r++){
+			for (int c=1; c<numNode+1; c++){
+				bWriter.write(String.valueOf(coloring.adjacencyMatrix[r][c]));
+			}
+			bWriter.newLine();
+		}
+		bWriter.newLine();
+		s.close();
+		bWriter.close();
+	}
+
+}
